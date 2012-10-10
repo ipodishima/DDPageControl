@@ -17,6 +17,8 @@
 
 @synthesize numberOfPages ;
 @synthesize currentPage ;
+@synthesize currentPages = _currentPages;
+
 @synthesize hidesForSinglePage ;
 @synthesize defersCurrentPageDisplay ;
 
@@ -55,7 +57,7 @@
 {
 	[onColor release], onColor = nil ;
 	[offColor release], offColor = nil ;
-	
+	[_currentPages release], _currentPages = nil;
 	[super dealloc] ;
 }
 
@@ -93,7 +95,7 @@
 	{
 		CGRect dotRect = CGRectMake(x, y, diameter, diameter) ;
 		
-		if (i == currentPage)
+		if ([_currentPages containsIndex:i])
 		{
 			if (type == DDPageControlTypeOnFullOffFull || type == DDPageControlTypeOnFullOffEmpty)
 			{
@@ -133,13 +135,25 @@
 
 - (void)setCurrentPage:(NSInteger)pageNumber
 {
-	// no need to update in that case
-	if (currentPage == pageNumber)
+    [self setCurrentPages:[NSIndexSet indexSetWithIndex:pageNumber]];
+}
+
+- (void) setCurrentPages:(NSIndexSet *)currentPages
+{
+    // no need to update in that case
+	if ([currentPages isEqualToIndexSet:_currentPages])
 		return ;
 	
+    NSMutableIndexSet *checkedIndexSet = [NSMutableIndexSet indexSet];
 	// determine if the page number is in the available range
-	currentPage = MIN(MAX(0, pageNumber), numberOfPages - 1) ;
+    [currentPages enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+        idx = MIN(MAX(0, idx), numberOfPages - 1) ;
+        [checkedIndexSet addIndex:idx];
+    }];
 	
+    [_currentPages release];
+    _currentPages = [checkedIndexSet retain];
+    
 	// in case we do not defer the page update, we redraw the view
 	if (self.defersCurrentPageDisplay == NO)
 		[self setNeedsDisplay] ;

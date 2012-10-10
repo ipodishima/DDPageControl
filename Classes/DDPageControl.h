@@ -23,12 +23,12 @@ DDPageControlType ;
 @interface DDPageControl : UIControl 
 {
 	NSInteger numberOfPages ;
-	NSInteger currentPage ;
 }
 
 // Replicate UIPageControl features
 @property(nonatomic) NSInteger numberOfPages ;
 @property(nonatomic) NSInteger currentPage ;
+@property(nonatomic, retain) NSIndexSet *currentPages ;
 
 @property(nonatomic) BOOL hidesForSinglePage ;
 
