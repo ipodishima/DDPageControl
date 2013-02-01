@@ -135,7 +135,8 @@
 
 - (void)setCurrentPage:(NSInteger)pageNumber
 {
-    [self setCurrentPages:[NSIndexSet indexSetWithIndex:pageNumber]];
+    if (pageNumber < NSNotFound)
+        [self setCurrentPages:[NSIndexSet indexSetWithIndex:pageNumber]];
 }
 
 - (void) setCurrentPages:(NSIndexSet *)currentPages
